@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Un message pour toi</title>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  font-family:Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  overflow:hidden;
+  background:url("background.jpg") center/cover no-repeat;
+}
+
+body::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(6px);
+  z-index:0;
+}
+
+.card{
+  position:relative;
+  z-index:2;
+  width:90%;
+  max-width:600px;
+  background:rgba(0,0,0,0.65);
+  padding:40px;
+  border-radius:20px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+button{
+  margin-top:25px;
+  padding:12px 25px;
+  border:none;
+  border-radius:30px;
+  background:#ff4fd8;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  display:none;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.08);
+}
+
+.floating{
+  position:absolute;
+  top:-50px;
+  font-size:20px;
+  animation:fall linear forwards;
+  z-index:1;
+  opacity:0.8;
+}
+
+@keyframes fall{
+  to{
+    transform:translateY(110vh) rotate(360deg);
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2 id="title"></h2>
+  <p id="text"></p>
+  <button id="nextBtn" onclick="nextPage()">Suivant</button>
+</div>
+
+<script>
+
+let page = 0;
+
+const pages = [
+{
+title:"J'avais un petit truc à te dire",
+text:`Ça fait un moment que tu m'intéresses.
+Je sais que tu vois bien que je peux être insistant, parfois même un peu relou…
+Mais si je le suis, c'est parce que tu as l'air vraiment intéressante.`
+},
+{
+title:"Peut-être pas un hasard…",
+text:`Si je t'ai croisée à Orléans alors que tu ne viens pas souvent,
+c’est peut-être pas pour rien.
+Peut-être que c’est simplement le destin.`
+},
+{
+title:"Rien n'arrive au hasard",
+text:`Malgré la différence d'âge, malgré la distance,
+pour moi ce ne sont pas des freins.
+Quand on veut vraiment quelque chose, on trouve des solutions.`
+},
+{
+title:"Alors voilà",
+text:`J’ai envie d’apprendre à te connaître vraiment.
+Je suis motivé, sincère, et prêt à m’engager dans quelque chose de concret.
+Même si je suis un peu plus jeune, ça ne change rien à ma détermination.`
+}
+];
+
+function typeWriter(element, text, speed, callback){
+  element.innerHTML = "";
+  let i = 0;
+
+  function typing(){
+    if(i < text.length){
+      element.innerHTML += text.charAt(i) === "\n" ? "<br>" : text.charAt(i);
+      i++;
+      setTimeout(typing, speed);
+    } else {
+      if(callback) callback();
+    }
+  }
+  typing();
+}
+
+function loadPage(){
+  document.getElementById("nextBtn").style.display = "none";
+
+  typeWriter(
+    document.getElementById("title"),
+    pages[page].title,
+    40,
+    () => {
+      typeWriter(
+        document.getElementById("text"),
+        pages[page].text,
+        25,
+        () => {
+          document.getElementById("nextBtn").style.display = "inline-block";
+        }
+      );
+    }
+  );
+}
+
+function nextPage(){
+  page++;
+  if(page < pages.length){
+    loadPage();
+  } else {
+    document.getElementById("title").innerHTML = "À toi de jouer 👀";
+    document.getElementById("text").innerHTML = `
+      Si tu es arrivée jusqu'ici…
+      viens me dire ce que tu en penses 😌
+      <br><br>
+      <a href="https://wa.me/447488813781?text=Je%20viens%20de%20voir%20ton%20site%20👀" target="_blank">
+        <button style="display:inline-block;background:#25D366;">💬 M'écrire sur WhatsApp</button>
+      </a>
+    `;
+    document.getElementById("nextBtn").style.display = "none";
+  }
+}
+
+function createFloating(){
+  const el = document.createElement("div");
+  el.classList.add("floating");
+  el.style.left = Math.random()*100 + "vw";
+  el.style.animationDuration = (5 + Math.random()*5) + "s";
+  el.innerHTML = Math.random() > 0.5 ? "❤️" : "🌹";
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.remove(); }, 10000);
+}
+
+setInterval(createFloating, 400);
+
+loadPage();
+
+</script>
+
+</body>
+</html>
