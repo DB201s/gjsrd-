@@ -1,3 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Message</title>
+
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#111;
+  color:white;
+  text-align:center;
+  padding:20px;
+}
+
+.card{
+  max-width:600px;
+}
+
+button{
+  margin-top:20px;
+  padding:12px 25px;
+  border:none;
+  border-radius:30px;
+  background:#ff4fd8;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2 id="title"></h2>
+  <p id="text"></p>
+  <button onclick="next()">Suivant</button>
+</div>
+
 <script>
 
 let page = 0;
@@ -5,103 +51,47 @@ let page = 0;
 const pages = [
 {
 title:"J'avais un petit truc à te dire",
-text:`Ça fait un moment que tu m'intéresses.
-Je sais que tu vois bien que je peux être insistant, parfois même un peu relou…
-Mais si je le suis, c'est parce que tu as l'air vraiment intéressante.`
+text:"Ça fait un moment que tu m'intéresses. Je sais que je peux paraître insistant, mais c'est parce que tu as l'air vraiment intéressante."
 },
 {
 title:"Peut-être pas un hasard…",
-text:`Si je t'ai croisée à Orléans alors que tu ne viens pas souvent,
-c’est peut-être pas pour rien.
-Peut-être que c’est simplement le destin.`
+text:"Si je t'ai croisée à Orléans alors que tu ne viens pas souvent, c’est peut-être pas pour rien. Peut-être que c’est le destin."
 },
 {
 title:"Rien n'arrive au hasard",
-text:`Malgré la différence d'âge, malgré la distance,
-pour moi ce ne sont pas des freins.
-Quand on veut vraiment quelque chose, on trouve des solutions.`
+text:"Malgré la différence d'âge et la distance, ce ne sont pas des freins pour moi. Quand on veut quelque chose, on trouve des solutions."
 },
 {
 title:"Alors voilà",
-text:`J’ai envie d’apprendre à te connaître vraiment.
-Je suis motivé, sincère, et prêt à m’engager dans quelque chose de concret.
-Même si je suis un peu plus jeune, ça ne change rien à ma détermination.`
+text:"J’ai envie d’apprendre à te connaître vraiment. Je suis prêt à m’engager dans quelque chose de concret."
 }
 ];
 
-const card = document.querySelector(".card");
-const titleEl = document.getElementById("title");
-const textEl = document.getElementById("text");
-const btn = document.getElementById("nextBtn");
-
-function typeWriter(element, text, speed, callback){
-  element.innerHTML = "";
-  let i = 0;
-
-  function typing(){
-    if(i < text.length){
-      element.innerHTML += text.charAt(i) === "\n" ? "<br>" : text.charAt(i);
-      i++;
-      setTimeout(typing, speed);
-    } else {
-      if(callback) callback();
-    }
-  }
-
-  typing();
+function show(){
+  document.getElementById("title").innerText = pages[page].title;
+  document.getElementById("text").innerText = pages[page].text;
 }
 
-function loadPage(){
-  btn.style.display = "none";
-
-  card.style.opacity = 0;
-
-  setTimeout(() => {
-
-    typeWriter(titleEl, pages[page].title, 40, () => {
-      typeWriter(textEl, pages[page].text, 25, () => {
-        btn.style.display = "inline-block";
-      });
-    });
-
-    card.style.opacity = 1;
-
-  }, 300);
-}
-
-function nextPage(){
+function next(){
   page++;
   if(page < pages.length){
-    loadPage();
+    show();
   } else {
-    card.style.opacity = 0;
-    setTimeout(() => {
-      titleEl.innerHTML = "À toi de jouer 👀";
-      textEl.innerHTML = `
-        Si tu es arrivée jusqu'ici…
-        <br><br>
-        <a href="https://wa.me/447488813781?text=Je%20viens%20de%20voir%20ton%20site%20👀" target="_blank">
-          <button style="display:inline-block;background:#25D366;">💬 M'écrire sur WhatsApp</button>
+    document.body.innerHTML = `
+      <div style="text-align:center">
+        <h2>À toi de jouer 👀</h2>
+        <br>
+        <a href="https://wa.me/447488813781?text=Je%20viens%20de%20voir%20ton%20site%20👀">
+          <button style="background:#25D366">💬 M'écrire sur WhatsApp</button>
         </a>
-      `;
-      btn.style.display = "none";
-      card.style.opacity = 1;
-    }, 300);
+      </div>
+    `;
   }
 }
 
-function createFloating(){
-  const el = document.createElement("div");
-  el.classList.add("floating");
-  el.style.left = Math.random()*100 + "vw";
-  el.style.animationDuration = (5 + Math.random()*5) + "s";
-  el.innerHTML = Math.random() > 0.5 ? "❤️" : "🌹";
-  document.body.appendChild(el);
-  setTimeout(()=>{ el.remove(); }, 10000);
-}
-
-setInterval(createFloating, 400);
-
-loadPage();
+show();
 
 </script>
+
+</body>
+</html>
