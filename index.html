@@ -1,224 +1,107 @@
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Un message pour toi</title>
+<script>
 
-  <style>
-    :root { --pink:#ff4fd8; --wa:#25D366; }
+let page = 0;
 
-    *{ box-sizing:border-box; }
-
-    body{
-      margin:0;
-      min-height:100vh;
-      font-family: Arial, sans-serif;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      color:#fff;
-      overflow:hidden;
-
-      /* Fallback (si l'image ne charge pas, tu vois quand même tout) */
-      background:
-        radial-gradient(900px 600px at 15% 15%, rgba(255,79,216,.22), transparent 60%),
-        radial-gradient(900px 600px at 80% 70%, rgba(124,92,255,.22), transparent 60%),
-        linear-gradient(180deg, #0b1020, #1a0b2a);
-    }
-
-    /* Image de fond (si background.jpg existe) */
-    .bg{
-      position:fixed;
-      inset:0;
-      background:url("background.jpg") center/cover no-repeat;
-      z-index:0;
-    }
-
-    /* Overlay sombre + flou */
-    .overlay{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.55);
-      backdrop-filter: blur(7px);
-      z-index:1;
-    }
-
-    .card{
-      position:relative;
-      z-index:2;
-      width:min(600px, 92vw);
-      background:rgba(0,0,0,0.65);
-      border:1px solid rgba(255,255,255,0.12);
-      border-radius:20px;
-      padding:38px 34px;
-      text-align:center;
-      box-shadow:0 20px 60px rgba(0,0,0,0.5);
-      transition: opacity .25s ease;
-    }
-
-    h2{ margin:0 0 12px 0; font-size:22px; }
-    p{ margin:0; line-height:1.65; opacity:.95; min-height: 90px; }
-
-    .btn{
-      margin-top:22px;
-      padding:12px 24px;
-      border:0;
-      border-radius:30px;
-      background:var(--pink);
-      color:#fff;
-      font-weight:700;
-      cursor:pointer;
-      display:none;
-      transition:.2s transform;
-    }
-    .btn:hover{ transform:scale(1.06); }
-
-    .btn-wa{ background:var(--wa); display:inline-block !important; }
-
-    /* Coeurs + roses */
-    .floating{
-      position:fixed;
-      top:-50px;
-      z-index:1;           /* derrière la card, devant le fond */
-      pointer-events:none;
-      opacity:0.9;
-      font-size:20px;
-      will-change: transform;
-      animation: fall linear forwards;
-    }
-    @keyframes fall{
-      to { transform: translateY(115vh) rotate(360deg); }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="bg"></div>
-  <div class="overlay"></div>
-
-  <div class="card" id="card">
-    <h2 id="title"></h2>
-    <p id="text"></p>
-    <button class="btn" id="nextBtn" type="button">Suivant</button>
-  </div>
-
-  <script>
-    let page = 0;
-    let token = 0; // annule l'ancienne animation si on clique
-
-    const pages = [
-      {
-        title: "J'avais un petit truc à te dire",
-        text: `Ça fait un moment que tu m'intéresses.
+const pages = [
+{
+title:"J'avais un petit truc à te dire",
+text:`Ça fait un moment que tu m'intéresses.
 Je sais que tu vois bien que je peux être insistant, parfois même un peu relou…
 Mais si je le suis, c'est parce que tu as l'air vraiment intéressante.`
-      },
-      {
-        title: "Peut-être pas un hasard…",
-        text: `Si je t'ai croisée à Orléans alors que tu ne viens pas souvent,
+},
+{
+title:"Peut-être pas un hasard…",
+text:`Si je t'ai croisée à Orléans alors que tu ne viens pas souvent,
 c’est peut-être pas pour rien.
 Peut-être que c’est simplement le destin.`
-      },
-      {
-        title: "Rien n'arrive au hasard",
-        text: `Malgré la différence d'âge, malgré la distance,
+},
+{
+title:"Rien n'arrive au hasard",
+text:`Malgré la différence d'âge, malgré la distance,
 pour moi ce ne sont pas des freins.
 Quand on veut vraiment quelque chose, on trouve des solutions.`
-      },
-      {
-        title: "Alors voilà",
-        text: `J’ai envie d’apprendre à te connaître vraiment.
+},
+{
+title:"Alors voilà",
+text:`J’ai envie d’apprendre à te connaître vraiment.
 Je suis motivé, sincère, et prêt à m’engager dans quelque chose de concret.
 Même si je suis un peu plus jeune, ça ne change rien à ma détermination.`
-      }
-    ];
+}
+];
 
-    const card   = document.getElementById("card");
-    const titleE = document.getElementById("title");
-    const textE  = document.getElementById("text");
-    const btn    = document.getElementById("nextBtn");
+const card = document.querySelector(".card");
+const titleEl = document.getElementById("title");
+const textEl = document.getElementById("text");
+const btn = document.getElementById("nextBtn");
 
-    btn.addEventListener("click", nextPage);
+function typeWriter(element, text, speed, callback){
+  element.innerHTML = "";
+  let i = 0;
 
-    function typeWriter(el, text, speed, myToken, done){
-      el.innerHTML = "";
-      let i = 0;
-
-      function step(){
-        if(myToken !== token) return; // stop net si on change de page
-        if(i < text.length){
-          const ch = text.charAt(i);
-          el.innerHTML += (ch === "\n") ? "<br>" : ch;
-          i++;
-          setTimeout(step, speed);
-        } else {
-          done && done();
-        }
-      }
-      step();
+  function typing(){
+    if(i < text.length){
+      element.innerHTML += text.charAt(i) === "\n" ? "<br>" : text.charAt(i);
+      i++;
+      setTimeout(typing, speed);
+    } else {
+      if(callback) callback();
     }
+  }
 
-    function showPage(){
-      token++;
-      const myToken = token;
+  typing();
+}
 
+function loadPage(){
+  btn.style.display = "none";
+
+  card.style.opacity = 0;
+
+  setTimeout(() => {
+
+    typeWriter(titleEl, pages[page].title, 40, () => {
+      typeWriter(textEl, pages[page].text, 25, () => {
+        btn.style.display = "inline-block";
+      });
+    });
+
+    card.style.opacity = 1;
+
+  }, 300);
+}
+
+function nextPage(){
+  page++;
+  if(page < pages.length){
+    loadPage();
+  } else {
+    card.style.opacity = 0;
+    setTimeout(() => {
+      titleEl.innerHTML = "À toi de jouer 👀";
+      textEl.innerHTML = `
+        Si tu es arrivée jusqu'ici…
+        <br><br>
+        <a href="https://wa.me/447488813781?text=Je%20viens%20de%20voir%20ton%20site%20👀" target="_blank">
+          <button style="display:inline-block;background:#25D366;">💬 M'écrire sur WhatsApp</button>
+        </a>
+      `;
       btn.style.display = "none";
-      card.style.opacity = 0;
+      card.style.opacity = 1;
+    }, 300);
+  }
+}
 
-      setTimeout(() => {
-        // purge totale => aucun ancien texte ne reste
-        titleE.innerHTML = "";
-        textE.innerHTML  = "";
+function createFloating(){
+  const el = document.createElement("div");
+  el.classList.add("floating");
+  el.style.left = Math.random()*100 + "vw";
+  el.style.animationDuration = (5 + Math.random()*5) + "s";
+  el.innerHTML = Math.random() > 0.5 ? "❤️" : "🌹";
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.remove(); }, 10000);
+}
 
-        card.style.opacity = 1;
+setInterval(createFloating, 400);
 
-        typeWriter(titleE, pages[page].title, 35, myToken, () => {
-          typeWriter(textE, pages[page].text, 18, myToken, () => {
-            if(myToken === token) btn.style.display = "inline-block";
-          });
-        });
-      }, 220);
-    }
+loadPage();
 
-    function nextPage(){
-      page++;
-      if(page < pages.length){
-        showPage();
-        return;
-      }
-
-      // Fin WhatsApp
-      token++;
-      btn.style.display = "none";
-      card.style.opacity = 0;
-
-      setTimeout(() => {
-        titleE.innerHTML = "À toi de jouer 👀";
-        textE.innerHTML = `
-          Si tu es arrivée jusqu'ici…<br><br>
-          <a href="https://wa.me/447488813781?text=Je%20viens%20de%20voir%20ton%20site%20👀" target="_blank" rel="noopener">
-            <button class="btn btn-wa" type="button">💬 M'écrire sur WhatsApp</button>
-          </a>
-        `;
-        card.style.opacity = 1;
-      }, 220);
-    }
-
-    // Coeurs + roses (corrigé : left en vw => pas collé à gauche)
-    function createFloating(){
-      const el = document.createElement("div");
-      el.className = "floating";
-      el.style.left = (Math.random() * 100) + "vw";
-      el.style.animationDuration = (5 + Math.random() * 6) + "s";
-      el.textContent = (Math.random() > 0.5) ? "❤️" : "🌹";
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 12000);
-    }
-    setInterval(createFloating, 350);
-
-    // start
-    showPage();
-  </script>
-</body>
-</html>
+</script>
