@@ -1,7 +1,147 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
-<body style="margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center;background:#111;color:#fff;font:700 28px Arial">
-  ✅ GITHUB PAGES AFFICHE BIEN CE FICHIER
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Message</title>
+
+<style>
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:Arial, sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:url("background.jpg") center/cover no-repeat;
+    color:white;
+    text-align:center;
+    padding:20px;
+    overflow:hidden;
+  }
+
+  /* overlay sombre pour lisibilité */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.50);
+    backdrop-filter:blur(5px);
+    z-index:0;
+  }
+
+  .card{
+    position:relative;
+    z-index:2;
+    width:90%;
+    max-width:600px;
+    background:rgba(0,0,0,0.55);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:18px;
+    padding:28px 22px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.45);
+  }
+
+  h2{ margin:0 0 12px 0; }
+  p{ margin:0; line-height:1.6; }
+
+  button{
+    margin-top:20px;
+    padding:12px 25px;
+    border:none;
+    border-radius:30px;
+    background:#ff4fd8;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+  }
+  button:hover{ transform:scale(1.05); }
+
+  /* coeurs & roses */
+  .floating{
+    position:fixed;
+    top:-50px;
+    font-size:22px;
+    animation:fall linear forwards;
+    z-index:1; /* derrière la card, devant le fond */
+    pointer-events:none;
+    opacity:0.9;
+  }
+
+  @keyframes fall{
+    to{ transform:translateY(110vh) rotate(360deg); }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2 id="title"></h2>
+  <p id="text"></p>
+  <button id="btn" onclick="next()">Suivant</button>
+</div>
+
+<script>
+  let page = 0;
+
+  const pages = [
+    {
+      title:"J'avais un petit truc à te dire",
+      text:"Ça fait un moment que tu m'intéresses. Je sais que je peux paraître insistant, parfois même un peu relou… mais c'est parce que tu as l'air vraiment intéressante."
+    },
+    {
+      title:"Peut-être pas un hasard…",
+      text:"Si je t'ai croisée à Orléans alors que tu ne viens pas souvent, c’est peut-être pas pour rien. Peut-être que c’est le destin."
+    },
+    {
+      title:"Rien n'arrive au hasard",
+      text:"Malgré la différence d'âge et la distance, ce ne sont pas des freins pour moi. Quand on veut quelque chose, on trouve des solutions."
+    },
+    {
+      title:"Alors voilà",
+      text:"J’ai envie d’apprendre à te connaître vraiment. Je suis motivé, sincère, et prêt à m’engager dans quelque chose de concret, même si je suis un peu plus jeune."
+    }
+  ];
+
+  function show(){
+    document.getElementById("title").innerText = pages[page].title;
+    document.getElementById("text").innerText = pages[page].text;
+  }
+
+  function next(){
+    page++;
+    if(page < pages.length){
+      show();
+    } else {
+      document.body.innerHTML = `
+        <div style="position:relative;z-index:2;text-align:center;color:white;font-family:Arial;">
+          <h2>À toi de voir  👀</h2>
+          <p>Si tu veux, viens me dire ce que t'en penses 😌</p>
+          <br>
+          <a href="https://wa.me/447488813781?text=Je%20viens%20de%20voir%20ton%20site%20👀" target="_blank" rel="noopener">
+            <button style="background:#25D366;">💬 M'écrire sur WhatsApp</button>
+          </a>
+        </div>
+      `;
+    }
+  }
+
+  /* coeurs + roses */
+  function createFloating(){
+    const el = document.createElement("div");
+    el.className = "floating";
+    el.style.left = (Math.random()*100) + "vw";
+    el.style.animationDuration = (5 + Math.random()*6) + "s";
+    el.textContent = Math.random() > 0.5 ? "❤️" : "🌹";
+    document.body.appendChild(el);
+    setTimeout(()=> el.remove(), 12000);
+  }
+  setInterval(createFloating, 400);
+
+  show();
+</script>
+
 </body>
 </html>
